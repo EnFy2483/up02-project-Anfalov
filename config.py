@@ -1,0 +1,1 @@
+DB_PATH = "databases/db_sklad18_N.db"

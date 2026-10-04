@@ -1,4 +1,3 @@
-
 SELECT название, цена FROM Товар ORDER BY цена DESC LIMIT 1;
 
 SELECT название, цена FROM Товар ORDER BY цена ASC LIMIT 1;
@@ -9,8 +8,7 @@ SELECT * FROM Товар WHERE название LIKE '%о%';
 
 SELECT * FROM Заказ WHERE клиент = 'Иванов Иван Иванович';
 
-FROM Заказ
-    JOIN Товар ON Заказ.товар_id = Товар.id;
+FROM Заказ JOIN Товар ON Заказ.товар_id = Товар.id;
 
 SELECT SUM(Товар.цена * Заказ.количество) AS итого_сумма
 FROM Заказ

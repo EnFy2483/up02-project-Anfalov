@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Проверка подключения к БД."""
 import sqlite3
 from config import DB_PATH
@@ -19,4 +20,27 @@ def test_connection():
 
 
 if __name__ == "__main__":
+=======
+"""Проверка подключения к БД."""
+import sqlite3
+from config import DB_PATH
+
+
+def test_connection():
+    """Проверка подключения к БД."""
+    try:
+        conn = sqlite3.connect(str(DB_PATH))   # ← str() обязательно для варианта B
+        print(f"Подключение к {DB_PATH} установлено")
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM Товар")
+        count = cur.fetchone()[0]
+        print(f"Товаров в базе: {count}")
+        conn.close()
+        print("Соединение закрыто")
+    except sqlite3.Error as e:
+        print(f"Ошибка БД: {e}")
+
+
+if __name__ == "__main__":
+>>>>>>> ae70612 (ДЗ: класс Order и загрузка заказов)
     test_connection()

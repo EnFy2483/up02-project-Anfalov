@@ -46,3 +46,7 @@ class Product:
         return (f"{self.name} ({self.category}): "
                 f"{self.price} руб. × {self.quantity} = "
                 f"{self.total()} руб. ({self.indicator()})")
+        
+def discounted_price(self):
+    """Цена со скидкой 25% (упрощённо)."""
+    return self.price * 0.80

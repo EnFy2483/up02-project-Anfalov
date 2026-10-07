@@ -38,4 +38,5 @@ def print_products(products):
 
 if __name__ == "__main__":
     products = get_all_products()
-    print_products(products)
+
+print_products(products)

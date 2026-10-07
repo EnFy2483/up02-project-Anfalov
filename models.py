@@ -1,4 +1,6 @@
 """Модели данных для проекта УП.02."""
+from datetime import datetime
+from discount import calculate_price_with_discount
 
 
 class Product:
@@ -6,17 +8,7 @@ class Product:
 
     def __init__(self, product_id, name, category, description,
                  price, supplier, quantity):
-        """
-        Инициализация товара.
-
-        :param product_id: идентификатор
-        :param name: название
-        :param category: категория
-        :param description: описание
-        :param price: цена
-        :param supplier: поставщик
-        :param quantity: количество
-        """
+        """Инициализация товара."""
         self.id = product_id
         self.name = name
         self.category = category
@@ -33,20 +25,51 @@ class Product:
         """Цена со скидкой (discount — процент)."""
         return self.price * (1 - discount / 100)
 
+    def price_with_discount_auto(self, date=None):
+        """Цена со скидкой по алгоритму ДЭ."""
+        if date is None:
+            date = datetime.now()
+        return calculate_price_with_discount(self.id, self.price, date)
+
     def indicator(self):
         """Индикатор «много» / «мало» (порог 5)."""
         return "много" if self.quantity > 5 else "мало"
 
     def is_available(self):
-        """True, если товар есть на складе."""
+        """Товар доступен для заказа?"""
         return self.quantity > 0
+
+    def discounted_price(self):
+        """Цена со скидкой 25% (упрощённо)."""
+        return self.price * 0.75
 
     def info(self):
         """Строка с информацией о товаре."""
         return (f"{self.name} ({self.category}): "
                 f"{self.price} руб. × {self.quantity} = "
                 f"{self.total()} руб. ({self.indicator()})")
-        
-def discounted_price(self):
-    """Цена со скидкой 25% (упрощённо)."""
-    return self.price * 0.80
+
+
+class Order:
+    """Класс Заказ."""
+
+    def __init__(self, order_id, date, client, product, quantity):
+        """Инициализация заказа."""
+        self.id = order_id
+        self.date = date
+        self.client = client
+        self.product = product  # объект Product
+        self.quantity = quantity
+
+    def total(self):
+        """Стоимость заказа."""
+        return self.product.price * self.quantity
+
+    def order_info(self):
+        """Информация о заказе."""
+        return f"Заказ №{self.id} от {self.date}: {self.client}"
+
+    def info(self):
+        """Полная информация о заказе."""
+        return (f"Заказ №{self.id} от {self.date}: "
+                f"{self.client} – {self.product.name} × {self.quantity}")

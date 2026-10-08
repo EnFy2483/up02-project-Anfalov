@@ -1,17 +1,32 @@
-"""Главное окно приложения с каталогом."""
+"""Главное окно с каталогом."""
 import os
 import tkinter as tk
 from tkinter import ttk
 
-from PIL import Image, ImageTk
-
-from config import APP_TITLE, FONT_FAMILY, COLOR_HEADER
+from styles import COLOR_SECONDARY_BG, FONT_SIZE_TITLE, font
+from config import APP_TITLE
 import db_products as db
 from catalog import create_product_card
+from resources import load_image_proportional, PATH_LOGO, PATH_ICON
 
 
-# Глобальный список для ссылок на изображения
 _image_refs = []
+
+
+def set_app_icon(root, icon_path):
+    """Устанавливает иконку приложения кроссплатформенно."""
+    try:
+        if os.name == "nt":  # Windows
+            if os.path.exists(icon_path):
+                root.iconbitmap(icon_path)
+        else:  # Linux/Mac
+            png_path = icon_path.replace(".ico", ".png")
+            icon_img = load_image_proportional(png_path, max_size=(32, 32))
+            if icon_img:
+                root.iconphoto(True, icon_img)
+                root._icon_photo = icon_img  # сохраняем ссылку
+    except Exception as e:
+        print(f"Не удалось установить иконку: {e}")
 
 
 class CatalogWindow:
@@ -19,29 +34,30 @@ class CatalogWindow:
         self.root = tk.Tk()
         self.root.title(APP_TITLE)
         self.root.geometry("900x700")
+        set_app_icon(self.root, PATH_ICON)
         self.build_ui()
         self.load_products()
 
     def build_ui(self):
-        # Шапка
-        header = tk.Frame(self.root, bg=COLOR_HEADER)
+        # Шапка с логотипом и заголовком
+        header = tk.Frame(self.root, bg=COLOR_SECONDARY_BG, height=80)
         header.pack(fill="x")
+        header.pack_propagate(False)
 
-        # Логотип
-        logo_path = "resources/logo.png"
-        if os.path.exists(logo_path):
-            try:
-                logo = Image.open(logo_path).resize((50, 50))
-                logo_photo = ImageTk.PhotoImage(logo)
-                logo_label = tk.Label(header, image=logo_photo, bg=COLOR_HEADER)
-                logo_label.pack(side="left", padx=10, pady=10)
-                _image_refs.append(logo_photo)
-            except Exception as e:
-                print(f"Ошибка загрузки логотипа: {e}")
+        # Логотип (слева) — с сохранением пропорций!
+        logo = load_image_proportional(PATH_LOGO, max_size=(60, 60))
+        if logo:
+            logo_label = tk.Label(header, image=logo, bg=COLOR_SECONDARY_BG)
+            logo_label.pack(side="left", padx=15)
+            _image_refs.append(logo)
+        else:
+            tk.Label(header, text="[ЛОГОТИП]",
+                     bg=COLOR_SECONDARY_BG).pack(side="left", padx=15)
 
+        # Заголовок (по центру)
         tk.Label(header, text="КАТАЛОГ ТОВАРОВ",
-                 font=(FONT_FAMILY, 16, "bold"),
-                 bg=COLOR_HEADER).pack(side="left", pady=15)
+                 font=font(FONT_SIZE_TITLE, bold=True),
+                 bg=COLOR_SECONDARY_BG).pack(expand=True)
 
         # Область с прокруткой
         body = tk.Frame(self.root, bg="white")
@@ -58,23 +74,13 @@ class CatalogWindow:
                 scrollregion=self.canvas.bbox("all")
             )
         )
-
         self.canvas.create_window((0, 0), window=self.catalog_frame,
                                   anchor="nw")
         self.canvas.configure(yscrollcommand=scrollbar.set)
-
         self.canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        self.canvas.bind_all(
-            "<MouseWheel>",
-            lambda e: self.canvas.yview_scroll(int(-1 * (e.delta / 120)), "units")
-        )
-
     def load_products(self):
-        for widget in self.catalog_frame.winfo_children():
-            widget.destroy()
-
         products = db.get_all_products()
         for p in products:
             create_product_card(self.catalog_frame, p)

@@ -30,7 +30,6 @@ def create_product_card(parent, product):
     _add_image(card, product, bg_color)
     _add_text_info(card, product, bg_color, qty)
 
-    # Разделитель между карточками
     separator = tk.Frame(parent, height=2, bg="#cccccc")
     separator.pack(fill="x", padx=10)
 

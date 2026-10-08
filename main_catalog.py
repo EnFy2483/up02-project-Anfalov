@@ -35,7 +35,7 @@ class CatalogWindow:
                 logo_photo = ImageTk.PhotoImage(logo)
                 logo_label = tk.Label(header, image=logo_photo, bg=COLOR_HEADER)
                 logo_label.pack(side="left", padx=10, pady=10)
-                _image_refs.append(logo_photo)   # ← ссылка в список
+                _image_refs.append(logo_photo)
             except Exception as e:
                 print(f"Ошибка загрузки логотипа: {e}")
 

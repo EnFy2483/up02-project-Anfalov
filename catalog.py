@@ -2,9 +2,7 @@
 import os
 import tkinter as tk
 from tkinter import ttk
-
 from PIL import Image, ImageTk
-
 from config import COLOR_HIGHLIGHT, FONT_FAMILY
 
 
@@ -16,7 +14,7 @@ _image_refs = []
 def create_product_card(parent, product):
     """Создаёт карточку товара по макету."""
     qty = product.quantity
-    bg_color = COLOR_HIGHLIGHT if qty <= 3 else "white"
+    bg_color = COLOR_HIGHLIGHT = "#ffb380"
 
     card = tk.Frame(parent, bg=bg_color, bd=1, relief="solid")
     card.pack(fill="x", padx=10, pady=5)
@@ -65,5 +63,8 @@ def create_product_card(parent, product):
     tk.Label(text_frame, text=f"{product.price} руб.",
              font=(FONT_FAMILY, 14, "bold"),
              bg=bg_color, anchor="e").pack(fill="x")
+
+    separator = tk.Frame(parent, height=2, bg="#cccccc")
+    separator.pack(fill="x", padx=10)
 
     return card

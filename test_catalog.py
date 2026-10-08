@@ -33,6 +33,15 @@ def test_prices():
             print(f"❌ Товар id={p.id}: нет цены")
             return
     print("✅ У всех товаров есть цена")
+    
+def test_quantity():
+    """Проверяет, что у всех товаров количество ≥ 0."""
+    products = db.get_all_products()
+    for p in products:
+        if p.quantity < 0:
+            print(f"❌ Товар id={p.id}: отрицательное количество")
+            return
+    print("✅ У всех товаров количество ≥ 0")
 
 
 if __name__ == "__main__":

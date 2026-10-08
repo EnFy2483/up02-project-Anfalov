@@ -59,6 +59,8 @@ def _add_text_info(card, product, bg_color, qty):
     """Добавляет текстовую информацию о товаре."""
     text_frame = tk.Frame(card, bg=bg_color)
     text_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+    indicator = _indicator(qty)
+    _add_label(text_frame, f"Количество: {indicator} ({qty})", bg_color)
 
     # --- Обработка крайних случаев ---
     name = product.name if product.name else "[Без названия]"
@@ -85,5 +87,10 @@ def _add_label(parent, text, bg_color, bold=False,
 
 
 def _indicator(qty):
-    """Индикатор «много/мало» (порог 5)."""
+    """
+    Индикатор «много/мало» (порог 5).
+
+    :param qty: количество товара
+    :return: «много» или «мало»
+    """
     return "много" if qty > 5 else "мало"

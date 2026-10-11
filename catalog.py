@@ -18,8 +18,15 @@ _image_refs = []
 AlignType = Literal["w", "e", "center", "n", "s", "nw", "ne", "sw", "se"]
 
 
-def create_product_card(parent, product):
-    """Создаёт карточку товара по макету."""
+def create_product_card(parent, product, refresh=None, client=None):
+    """
+    Создаёт карточку товара по макету.
+
+    :param parent: родительский контейнер
+    :param product: объект Product
+    :param refresh: callback для обновления каталога после заказа
+    :param client: ФИО авторизованного пользователя (для заказа)
+    """
     qty = product.quantity
     bg_color = _get_card_color(qty)
 
@@ -37,17 +44,22 @@ def create_product_card(parent, product):
     separator.pack(fill="x", padx=10)
 
     # === ПРИВЯЗКА КЛИКА (пара 19) ===
-    card.bind("<Button-1>", lambda e: _open_view(parent, product))
+    card.bind("<Button-1>",
+              lambda e: _open_view(parent, product, refresh, client))
     for child in card.winfo_children():
-        child.bind("<Button-1>", lambda e: _open_view(parent, product))
+        child.bind("<Button-1>",
+                   lambda e: _open_view(parent, product, refresh, client))
 
     return card
 
 
-def _open_view(parent, product):
+def _open_view(parent, product, refresh=None, client=None):
     """Открывает форму просмотра товара."""
     from view_form import ViewForm
-    ViewForm(parent, product)
+    # Окно привязываем к главному окну, а не к фрейму каталога,
+    # иначе refresh_catalog уничтожит его вместе с карточками
+    ViewForm(parent.winfo_toplevel(), product,
+             on_add_to_order=refresh, client=client)
 
 
 def _get_card_color(qty):

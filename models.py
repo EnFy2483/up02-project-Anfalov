@@ -47,9 +47,28 @@ class Product:
                 f"{self.price} руб. × {self.quantity} = "
                 f"{self.total()} руб. ({self.indicator()})")
         
-def discounted_price(self):
-    """Цена со скидкой 25% (упрощённо)."""
-    return self.price * 0.80
+class Order:
+    """Класс Заказ (ДЗ 4-й пары, восстановлен в паре 22)."""
 
-def order_info(self):
-    return f"Заказ №{self.id} от {self.date}: {self.client}"
+    def __init__(self, order_id, date, client, product, quantity):
+        """
+        :param order_id: идентификатор заказа
+        :param date: дата заказа
+        :param client: ФИО клиента
+        :param product: объект Product
+        :param quantity: количество единиц
+        """
+        self.id = order_id
+        self.date = date
+        self.client = client
+        self.product = product  # объект Product
+        self.quantity = quantity
+
+    def total(self):
+        """Стоимость заказа."""
+        return self.product.price * self.quantity
+
+    def info(self):
+        """Информация о заказе."""
+        return (f"Заказ №{self.id} от {self.date}: "
+                f"{self.client} – {self.product.name} × {self.quantity}")

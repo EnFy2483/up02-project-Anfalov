@@ -83,6 +83,29 @@ def get_categories():
     return categories
 
 
+def get_product_sizes(product_id):
+    """
+    Возвращает список размеров для товара.
+
+    В БД варианта 18 (электроника) поля «размер» нет —
+    тогда возвращается пустой список.
+
+    :param product_id: id товара
+    :return: список размеров
+    """
+    conn = sqlite3.connect(str(DB_PATH))
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT DISTINCT размер FROM Товар WHERE id = ?",
+                    (product_id,))
+        rows = cur.fetchall()
+    except sqlite3.OperationalError:
+        rows = []
+    finally:
+        conn.close()
+    return [row[0] for row in rows if row[0]]
+
+
 def print_products(products):
     """Выводит информацию о товарах."""
     print(f"\nВсего товаров: {len(products)}\n")

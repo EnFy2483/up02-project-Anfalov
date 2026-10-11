@@ -1,5 +1,6 @@
-"""Каталог товаров: карточка товара по макету (рефакторинг)."""
+"""Каталог товаров: карточка товара по макету."""
 import tkinter as tk
+from typing import Literal
 
 from styles import (
     COLOR_MAIN_BG,
@@ -10,19 +11,21 @@ from styles import (
 )
 from resources import get_product_image
 
-from typing import Literal
-
-AlignType = Literal["w", "e", "center", "n", "s", "nw", "ne", "sw", "se"]
-
 
 # Глобальный список для хранения ссылок на изображения
 _image_refs = []
+
+AlignType = Literal["w", "e", "center", "n", "s", "nw", "ne", "sw", "se"]
 
 
 def create_product_card(parent, product):
     """Создаёт карточку товара по макету."""
     qty = product.quantity
     bg_color = _get_card_color(qty)
+
+    # === ДИАГНОСТИКА (пара 15, задание 5.2) ===
+    print(f"[CARD] id={product.id}, name={product.name}, "
+          f"qty={qty}, bg={bg_color}, indicator={_indicator(qty)}")
 
     card = tk.Frame(parent, bg=bg_color, bd=1, relief="solid")
     card.pack(fill="x", padx=10, pady=5)
@@ -35,21 +38,27 @@ def create_product_card(parent, product):
 
     return card
 
+
 def _get_card_color(qty):
     """Возвращает цвет фона карточки."""
     return COLOR_HIGHLIGHT if qty <= 3 else COLOR_MAIN_BG
+
 
 def _add_image(card, product, bg_color):
     """Добавляет изображение товара (или заглушку)."""
     img_frame = tk.Frame(card, bg=bg_color)
     img_frame.pack(side="left", padx=10, pady=10)
 
-    photo = get_product_image(None, size=(100, 100))
-    if photo:
-        img_label = tk.Label(img_frame, image=photo, bg=bg_color)
-        img_label.pack()
-        _image_refs.append(photo)
-    else:
+    try:
+        photo = get_product_image(None, size=(100, 100))
+        if photo:
+            img_label = tk.Label(img_frame, image=photo, bg=bg_color)
+            img_label.pack()
+            _image_refs.append(photo)
+        else:
+            raise ValueError("Нет изображения")
+    except Exception as e:
+        print(f"[DEBUG] Ошибка загрузки фото: {e}")
         tk.Label(img_frame, text="[НЕТ ФОТО]", bg=bg_color,
                  width=10, height=5).pack()
 
@@ -58,8 +67,6 @@ def _add_text_info(card, product, bg_color, qty):
     """Добавляет текстовую информацию о товаре."""
     text_frame = tk.Frame(card, bg=bg_color)
     text_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
-    indicator = _indicator(qty)
-    _add_label(text_frame, f"Количество: {indicator} ({qty})", bg_color)
 
     # --- Обработка крайних случаев ---
     name = product.name if product.name else "[Без названия]"
@@ -78,8 +85,7 @@ def _add_text_info(card, product, bg_color, qty):
 
 
 def _add_label(parent, text, bg_color, bold=False,
-               size=FONT_SIZE_NORMAL,
-               align: AlignType = "w"):
+               size=FONT_SIZE_NORMAL, align: AlignType = "w"):
     """Добавляет метку с текстом."""
     tk.Label(parent, text=text, font=font(size, bold=bold),
              bg=bg_color, anchor=align).pack(fill="x")

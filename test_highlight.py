@@ -7,6 +7,9 @@ def test_highlight():
     """Прогон тестов для подсветки."""
     test_cases = [
         # (qty, expected_color, comment)
+        (1000, COLOR_MAIN_BG, "большое число"),
+        (-1, COLOR_HIGHLIGHT, "отрицательное (не должно быть)"),
+        (3, COLOR_HIGHLIGHT, "граница (повторно)"),
         (10, COLOR_MAIN_BG, "10 > 3 — нет подсветки"),
         (5, COLOR_MAIN_BG, "5 > 3 — нет подсветки"),
         (4, COLOR_MAIN_BG, "4 > 3 — нет подсветки"),

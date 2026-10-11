@@ -16,15 +16,15 @@ _image_refs = []
 def set_app_icon(root, icon_path):
     """Устанавливает иконку приложения кроссплатформенно."""
     try:
-        if os.name == "nt":  # Windows
+        if os.name == "nt":
             if os.path.exists(icon_path):
                 root.iconbitmap(icon_path)
-        else:  # Linux/Mac
+        else:
             png_path = icon_path.replace(".ico", ".png")
             icon_img = load_image_proportional(png_path, max_size=(32, 32))
             if icon_img:
                 root.iconphoto(True, icon_img)
-                root._icon_photo = icon_img  # сохраняем ссылку
+                root._icon_photo = icon_img
     except Exception as e:
         print(f"Не удалось установить иконку: {e}")
 
@@ -39,12 +39,10 @@ class CatalogWindow:
         self.load_products()
 
     def build_ui(self):
-        # Шапка с логотипом и заголовком
         header = tk.Frame(self.root, bg=COLOR_SECONDARY_BG, height=80)
         header.pack(fill="x")
         header.pack_propagate(False)
 
-        # Логотип (слева) — с сохранением пропорций!
         logo = load_image_proportional(PATH_LOGO, max_size=(60, 60))
         if logo:
             logo_label = tk.Label(header, image=logo, bg=COLOR_SECONDARY_BG)
@@ -54,12 +52,10 @@ class CatalogWindow:
             tk.Label(header, text="[ЛОГОТИП]",
                      bg=COLOR_SECONDARY_BG).pack(side="left", padx=15)
 
-        # Заголовок (по центру)
         tk.Label(header, text="КАТАЛОГ ТОВАРОВ",
                  font=font(FONT_SIZE_TITLE, bold=True),
                  bg=COLOR_SECONDARY_BG).pack(expand=True)
 
-        # Область с прокруткой
         body = tk.Frame(self.root, bg="white")
         body.pack(fill="both", expand=True)
 
